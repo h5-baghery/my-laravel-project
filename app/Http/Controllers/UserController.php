@@ -11,6 +11,24 @@ use Symfony\Component\Routing\Matcher\RedirectableUrlMatcher;
 
 class UserController extends Controller
 {
+
+    public function showAvatarForm()
+    {
+        return 'hihi';
+    }
+
+    public function updateAvatar()
+    {
+        return 'hi';
+    }
+
+    public function viewPostsProfile(User $user)
+    {
+        $posts = $user->posts()->latest()->get();
+        // $user = User::get();
+        return view('profile-posts', ['username' => $user->username, 'posts' => $posts, 'postCount' => $posts->count(), 'user' => $user]);
+    }
+
     public function showCorrectHomepage()
     {
         if (auth()->check()) {
