@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Container\Attributes\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\ImageManager;
 
 class UserController extends Controller
 {
@@ -20,7 +23,16 @@ class UserController extends Controller
             'avatar' => 'required|image|max:1000',
         ]);
 
-        $request->file('avatar')->store('avatars', 'public');
+        $user      = auth()->user();
+        $file_name = $user->id . "-" . uniqid() . ".jpg";
+        $manager   = new ImageManager(new Driver());
+        $image     = $manager->read($request->file('avatar'));
+        $imageData = $image->cover(120, 120)->toJpeg();
+        Storage::disk('public')->put('avatars/' . $file_name, $imageData);
+        // $user->update(['avatar' => $file_name]);
+        $user->avatar = $file_name;
+        $user->save();
+        // $request->file('avatar')->store(['avatars' => 'public']);
         return 'Successful';
     }
 
