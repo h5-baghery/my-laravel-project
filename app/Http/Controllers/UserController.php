@@ -30,10 +30,20 @@ class UserController extends Controller
         $imageData = $image->cover(120, 120)->toJpeg();
         Storage::disk('public')->put('avatars/' . $file_name, $imageData);
         // $user->update(['avatar' => $file_name]);
+
+        $oldAvatar = $user->avatar;
+
         $user->avatar = $file_name;
         $user->save();
+
+        if ($oldAvatar != '/fallback-avatar.jpg') {
+            Storage::disk('public')->delete(str_replace("/storage", "", $oldAvatar));
+        }
+
         // $request->file('avatar')->store(['avatars' => 'public']);
-        return 'Successful';
+
+        return back()->with('success', 'Congrats on the new avatar.');
+
     }
 
     public function viewPostsProfile(User $user)
