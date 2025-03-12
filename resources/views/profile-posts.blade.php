@@ -16,6 +16,9 @@
         <form x-show="showForm" action="{{ route('users.avatar.update', $user)}}" method="POST" enctype="multipart/form-data" class="mt-3">
           @csrf
           <input type="file" name="avatar" class="form-control mb-2">
+          @error('avatar')
+            <p class="alert small alert-danger shadow-sm">{{$message}}</p>
+          @enderror
           <button type="submit" class="btn btn-success">Upload</button>
         </form>
       </div>

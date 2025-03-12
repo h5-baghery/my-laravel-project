@@ -1,13 +1,10 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Container\Attributes\Auth;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redis;
 use Illuminate\Validation\Rule;
-use Symfony\Component\Routing\Matcher\RedirectableUrlMatcher;
 
 class UserController extends Controller
 {
@@ -17,9 +14,14 @@ class UserController extends Controller
         return 'hihi';
     }
 
-    public function updateAvatar()
+    public function updateAvatar(Request $request)
     {
-        return 'hi';
+        $request->validate([
+            'avatar' => 'required|image|max:1000',
+        ]);
+
+        $request->file('avatar')->store('avatars', 'public');
+        return 'Successful';
     }
 
     public function viewPostsProfile(User $user)
@@ -41,7 +43,7 @@ class UserController extends Controller
     {
         $incomingFields = $request->validate([
             'loginusername' => 'required',
-            'loginpassword' => 'required'
+            'loginpassword' => 'required',
         ]);
         if (auth()->attempt(['username' => $incomingFields['loginusername'], 'password' => $incomingFields['loginpassword']])) {
             $request->session()->regenerate();
@@ -61,8 +63,8 @@ class UserController extends Controller
     {
         $incomingFields = $request->validate([
             'username' => ['required', 'min:3', 'max:20', Rule::unique(table: 'users', column: 'username')],
-            'email' => ['required', 'email', Rule::unique(table: 'users', column: 'email')],
-            'password' => ['required', 'min:8', 'confirmed']
+            'email'    => ['required', 'email', Rule::unique(table: 'users', column: 'email')],
+            'password' => ['required', 'min:8', 'confirmed'],
         ]);
         $user = User::create($incomingFields);
         auth()->login($user);
