@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Models\Follow;
 use App\Models\User;
 use Illuminate\Container\Attributes\Auth;
 use Illuminate\Http\Request;
@@ -50,7 +51,10 @@ class UserController extends Controller
     {
         $posts = $user->posts()->latest()->get();
         // $user = User::get();
-        return view('profile-posts', ['username' => $user->username, 'posts' => $posts, 'postCount' => $posts->count(), 'user' => $user]);
+
+        $sameUser   = $user->id == auth()->user()?->id;
+        $isFollowed = Follow::where([['user_id', '=', auth()->user()?->id], ['followeduser', '=', $user->id]])->count();
+        return view('profile-posts', ['username' => $user->username, 'posts' => $posts, 'postCount' => $posts->count(), 'user' => $user, 'sameUser' => $sameUser, 'isFollowed' => $isFollowed]);
     }
 
     public function showCorrectHomepage()

@@ -3,11 +3,26 @@
   <div class="container py-md-5 container--narrow">
     <h2>
       <img class="avatar-small" src="{{$user->avatar}}" /> {{$username}}
-      <form class="ml-2 d-inline" action="#" method="POST">
-        @csrf
-        <button class="btn btn-primary btn-sm">Follow <i class="fas fa-user-plus"></i></button>
-        <!-- <button class="btn btn-danger btn-sm">Stop Following <i class="fas fa-user-times"></i></button> -->
-      </form>
+      @auth
+        @if (!$sameUser && !$isFollowed)
+          <form class="ml-2 d-inline" action="{{ route('create.follow', $username)}}" method="POST">
+            @csrf
+
+            <button class="btn btn-primary btn-sm">Follow <i class="fas fa-user-plus"></i></button>
+            <!-- <button class="btn btn-danger btn-sm">Stop Following <i class="fas fa-user-times"></i></button> -->
+          </form>
+          
+        @endif
+
+        @if (!$sameUser && $isFollowed)
+          <form class="ml-2 d-inline" action="{{ route('delete.follow', $username)}}" method="POST">
+            @csrf
+            
+            <button class="btn btn-primary btn-sm">Unfollow <i class="fas fa-user-plus"></i></button>
+            <!-- <button class="btn btn-danger btn-sm">Stop Following <i class="fas fa-user-times"></i></button> -->
+          </form>
+        @endif
+      @endauth
       @can('updateAvatar', $user)
       <a href="{{ route('show.avatarForm', $user)}}" class="btn btn-secondary btn-sm">Manage Avatar</a>
       <div x-data="{ showForm: false}">
