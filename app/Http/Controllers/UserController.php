@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Container\Attributes\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\View;
 use Illuminate\Validation\Rule;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
@@ -13,9 +14,14 @@ use Intervention\Image\ImageManager;
 class UserController extends Controller
 {
 
-    public function showAvatarForm()
+    private function getSharedData($user)
     {
-        return 'hihi';
+        // $posts = $user->posts()->latest()->get();
+        // $user = User::get();
+
+        $sameUser   = $user->id == auth()->user()?->id;
+        $isFollowed = Follow::where([['user_id', '=', auth()->user()?->id], ['followeduser', '=', $user->id]])->count();
+        View::share('sharedData', ['username' => $user->username, 'postCount' => $user->posts()->count(), 'followersCount' => $user->followers()->count(), 'followingsCount' => $user->followings()->count(), 'user' => $user, 'sameUser' => $sameUser, 'isFollowed' => $isFollowed]);
     }
 
     public function updateAvatar(Request $request)
@@ -47,14 +53,22 @@ class UserController extends Controller
 
     }
 
-    public function viewPostsProfile(User $user)
+    public function viewProfile(User $user)
     {
-        $posts = $user->posts()->latest()->get();
-        // $user = User::get();
+        $this->getSharedData($user);
+        return view('profile-posts', ['posts' => $user->posts()?->latest()->get()]);
+    }
 
-        $sameUser   = $user->id == auth()->user()?->id;
-        $isFollowed = Follow::where([['user_id', '=', auth()->user()?->id], ['followeduser', '=', $user->id]])->count();
-        return view('profile-posts', ['username' => $user->username, 'posts' => $posts, 'postCount' => $posts->count(), 'user' => $user, 'sameUser' => $sameUser, 'isFollowed' => $isFollowed]);
+    public function viewProfileFollowers(User $user)
+    {
+        $this->getSharedData($user);
+        return view('profile-followers', ['followers' => $user->followers()?->latest()->get()]);
+    }
+
+    public function viewProfileFollowings(User $user)
+    {
+        $this->getSharedData($user);
+        return view('profile-followings', ['followings' => $user->followings()->latest()->get()]);
     }
 
     public function showCorrectHomepage()

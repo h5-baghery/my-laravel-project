@@ -14,7 +14,10 @@ Route::get('/admin', function () {
 Route::post('/register', [UserController::class, "register"])->middleware('guest');
 Route::post('/login', [UserController::class, "login"])->middleware('guest');
 Route::post('/logout', [UserController::class, "logout"])->middleware('mustBeLoggedIn');
-Route::get('/profile/{user:username}', [UserController::class, 'viewPostsProfile'])->name('posts.profile');
+Route::get('/profile/{user:username}', [UserController::class, 'viewProfile'])->name('profile');
+Route::get('/profile/{user:username}/posts', [UserController::class, 'viewProfile'])->name('profile.posts');
+Route::get('/profile/{user:username}/followers', [UserController::class, 'viewProfileFollowers'])->name('profile.followers');
+Route::get('/profile/{user:username}/following', [UserController::class, 'viewProfileFollowings'])->name('profile.following');
 Route::get('/manage-avatar', [UserController::class, 'showAvatarForm'])->name('show.avatarForm');
 Route::post('/manage-avatar', [UserController::class, 'updateAvatar'])->name('users.avatar.update');
 
