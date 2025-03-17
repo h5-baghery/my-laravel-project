@@ -3,7 +3,7 @@
   <div class="list-group">
     @if ($followers)
       @foreach ($followers as $follower)
-        <a href="/following/{{$follower->userFollows->id}}" class="list-group-item list-group-item-action">
+        <a href="{{route('profile', $follower->userFollows)}}" class="list-group-item list-group-item-action">
           <img class="avatar-tiny" src="{{$follower->userFollows->avatar}}" />
           {{$follower->userFollows->username}}
         </a>

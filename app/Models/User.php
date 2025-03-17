@@ -55,6 +55,14 @@ class User extends Authenticatable
         ];
     }
 
+    public function feedPosts()
+    {
+
+        // return $this-> hasManyThrough(Post::class, Follow::class, 'foeign key on the intermediate rable', 'foeign key on the final rable', 'local key of the current table or model we are', 'the column we want from the intermediate table(the id of the users user follows')
+
+        return $this->hasManyThrough(Post::class, Follow::class, 'user_id', 'user_id', 'id', 'followeduser');
+    }
+
     public function followers()
     {
         return $this->hasMany(Follow::class, 'followeduser');
