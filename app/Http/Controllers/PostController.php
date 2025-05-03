@@ -1,23 +1,28 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\Post;
-use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Psy\VarDumper\Dumper;
+use Illuminate\Support\Str;
 
 class PostController extends Controller
 {
+    public function search($term)
+    {
+        $posts = Post::search($term)->get();
+        $posts->load('user:id,username,avatar');
+        return $posts;
+    }
+
     public function actuallyUpdatePost(Post $post, Request $request)
     {
         $incomingFields = $request->validate([
             'title' => 'required',
-            'body' => 'required'
+            'body'  => 'required',
         ]);
 
         $incomingFields['title'] = strip_tags($incomingFields['title']);
-        $incomingFields['body'] = strip_tags($incomingFields['body']);
+        $incomingFields['body']  = strip_tags($incomingFields['body']);
 
         $post->update($incomingFields);
 
@@ -50,15 +55,14 @@ class PostController extends Controller
     {
         $incomingFields = $request->validate([
             'title' => 'required',
-            'body' => 'required',
+            'body'  => 'required',
         ]);
 
-        $incomingFields['title'] = strip_tags($incomingFields['title']);
-        $incomingFields['body'] = strip_tags($incomingFields['body']);
+        $incomingFields['title']   = strip_tags($incomingFields['title']);
+        $incomingFields['body']    = strip_tags($incomingFields['body']);
         $incomingFields['user_id'] = auth()->id();
 
         $post = Post::create($incomingFields);
-
 
         return redirect()->route('post.viewSinglePost', $post->id)->with('success', 'New Post successfully created');
     }
