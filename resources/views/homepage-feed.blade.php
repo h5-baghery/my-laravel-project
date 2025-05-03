@@ -4,10 +4,7 @@
     @unless ($posts->isEmpty())
       <h2 class="text-center mb-4">The Latest From Those You Follow</h2>
       @foreach ($posts as $post)
-      <a href="{{route('post.viewSinglePost', $post)}}" class="list-group-item list-group-item-action">
-        <img class="avatar-tiny" src="{{$post->user->avatar}}" />
-        <strong>{{$post->title}} </strong> by {{$post->user->username}} <span class="text-muted small"> on {{$post->created_at->format('n/j/Y')}} </span>
-      </a>
+      <x-post :post="$post" />
       @endforeach
       <div class="mt-4">
 

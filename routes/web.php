@@ -32,3 +32,4 @@ Route::get('/post/{post}', [PostController::class, 'viewSinglePost'])->name('pos
 Route::get('/post/{post}/edit', [PostController::class, 'viewUpdatePost'])->name('post.viewUpdate')->middleware('can:update,post');
 Route::delete('/post/{post}', [PostController::class, 'deletePost'])->name('post.delete')->middleware('can:delete,post');
 Route::put('/post/{post}', [PostController::class, 'actuallyUpdatePost'])->name('post.actuallyUpdate')->middleware('can:update,post');
+Route::get('/search/{term}', [PostController::class, 'search']);
